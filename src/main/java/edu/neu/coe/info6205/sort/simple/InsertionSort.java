@@ -54,7 +54,18 @@ public class InsertionSort<X extends Comparable<X>> extends SortWithHelper<X> {
     public void sort(X[] xs, int from, int to) {
         final Helper<X> helper = getHelper();
 
-        // TO BE IMPLEMENTED
+        if((to - from) < xs.length){
+            System.out.println("Uneven length");
+            return;
+        }
+
+        for (int i=from; i<to; i++){
+            for (int j=i; j>from && ((Comparable) xs[j-1]).compareTo(xs[j])>0; j--){
+                helper.swap(xs, j, j-1);
+            }
+        }
+
+        return;
     }
 
     /**

@@ -115,7 +115,7 @@ public class WalkPlotter extends JFrame {
         chart.getLegend().setFrame(BlockBorder.NONE);
 
         NumberAxis domain = (NumberAxis) plot.getRangeAxis();
-        domain.setRange(0.00, 35.00);
+        //domain.setRange(0.00, 35.00);
         domain.setTickUnit(new NumberTickUnit(5));
         domain.setVerticalTickLabels(true);
 

@@ -4,10 +4,17 @@
 
 package edu.neu.coe.info6205.util;
 
+import java.util.ArrayList;
+import java.util.Random;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
+
+import edu.neu.coe.info6205.randomwalk.WalkPlotter;
+import edu.neu.coe.info6205.sort.simple.InsertionSort;
+import io.cucumber.java.sl.In;
+import org.jfree.data.xy.XYSeries;
 
 import static edu.neu.coe.info6205.util.Utilities.formatWhole;
 
@@ -30,6 +37,51 @@ import static edu.neu.coe.info6205.util.Utilities.formatWhole;
  * @param <T> The generic type T is that of the input to the function f which you will pass in to the constructor.
  */
 public class Benchmark_Timer<T> implements Benchmark<T> {
+
+    /**
+     * The main method, contains calls to the insertion sort to measure it's time
+     * using TimeLogger
+     * @param args  Commandline arguments
+     */
+    public static void main(String[] args) {
+        InsertionSort<Integer> insertionsort = new InsertionSort<Integer>();
+
+        Benchmark_Timer<Integer[]> benchmark = new Benchmark_Timer<Integer[]>("Benchmark for Insertion Sort",null, (a) -> { insertionsort.sort(a,0,a.length); } ,null);
+
+        XYSeries sort_time = new XYSeries("Sort time");
+
+        int elements = 400;
+        for(int i=0; i<8; i++) {
+            final int el = elements;
+            Supplier<Integer[]> arraysup = () -> benchmark.getRandom(el);
+            double time = benchmark.runFromSupplier(arraysup, 5);
+            double time_log = Math.log(time);
+            double el_log = Math.log(el);
+            System.out.println(time_log + " " + el_log);
+            sort_time.add(el_log,time_log);
+            logger.info("Time taken: " + time + " for " + elements + " elements.");
+            elements *= 2;
+        }
+
+        WalkPlotter plot = new WalkPlotter(sort_time, null, null);
+        plot.setVisible(true);
+    }
+
+    /**
+     *
+     * @return
+     */
+    public Integer[] getRandom(int n) {
+        ArrayList<Integer> lt = new ArrayList<Integer>();
+        Random random = new Random();
+
+        for (int i = 0; i < n; i++) {
+            lt.add(random.nextInt(1000));
+        }
+
+        return lt.toArray(new Integer[lt.size()]);
+    }
+
 
     /**
      * Calculate the appropriate number of warmup runs.
