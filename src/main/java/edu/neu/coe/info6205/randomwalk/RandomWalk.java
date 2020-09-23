@@ -138,7 +138,7 @@ public class RandomWalk {
         }
 
         System.out.println("Coefficient is: " + coef);
-        WalkPlotter plot = new WalkPlotter(ksrootx, sr, srootx);
+        WalkPlotter plot = new WalkPlotter(ksrootx, sr, srootx,"","","");
         plot.setVisible(true);
 
     }

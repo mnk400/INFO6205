@@ -13,7 +13,6 @@ import java.util.function.UnaryOperator;
 
 import edu.neu.coe.info6205.randomwalk.WalkPlotter;
 import edu.neu.coe.info6205.sort.simple.InsertionSort;
-import io.cucumber.java.sl.In;
 import org.jfree.data.xy.XYSeries;
 
 import static edu.neu.coe.info6205.util.Utilities.formatWhole;
@@ -40,43 +39,96 @@ public class Benchmark_Timer<T> implements Benchmark<T> {
 
     /**
      * The main method, contains calls to the insertion sort to measure it's time
-     * using TimeLogger
+     * using TimeLogger, and plot a graph for doubling number of elements vs time taken.
      * @param args  Commandline arguments
      */
     public static void main(String[] args) {
-        InsertionSort<Integer> insertionsort = new InsertionSort<Integer>();
+        // Object for InsertionSort
+        InsertionSort<Integer> sorter = new InsertionSort<Integer>();
 
-        Benchmark_Timer<Integer[]> benchmark = new Benchmark_Timer<Integer[]>("Benchmark for Insertion Sort",null, (a) -> { insertionsort.sort(a,0,a.length); } ,null);
+        // An object for benchmark_timer to set fpre, frun and fpost.
+        Benchmark_Timer<Integer[]> benchmark = new Benchmark_Timer<Integer[]>("Benchmark for Insertion Sort",null, (a) -> sorter.sort(a,0,a.length) ,null);
 
-        XYSeries sort_time = new XYSeries("Sort time");
+        // XYSeries to store data in to plot
+        XYSeries random_series = new XYSeries("Random Array");
+        XYSeries partial_series = new XYSeries("Sorted Array");
+        XYSeries reverse_series = new XYSeries("Reverse Sorted Array");
 
+        // Starting the sort with 400 elements.
         int elements = 400;
+
+        // For loop that increasingly doubles the number of elements and sorts them.
         for(int i=0; i<8; i++) {
+
+            // Creating a final integer with number of elements.
             final int el = elements;
-            Supplier<Integer[]> arraysup = () -> benchmark.getRandom(el);
-            double time = benchmark.runFromSupplier(arraysup, 5);
-            double time_log = Math.log(time);
-            double el_log = Math.log(el);
-            System.out.println(time_log + " " + el_log);
-            sort_time.add(el_log,time_log);
-            logger.info("Time taken: " + time + " for " + elements + " elements.");
+
+            // Creating a supplier with Integer[] to supply the random array
+            Supplier<Integer[]> randomsup = () -> benchmark.getArray(el, "random");
+            Supplier<Integer[]> partialsup = () -> benchmark.getArray(el, "partial");
+            Supplier<Integer[]> reversesup = () -> benchmark.getArray(el, "reverse");
+
+            // Storing the mean time calculated from running runFromSupplier on insertion sort
+            logger.info("Running for a Random with " + el + " elements.");
+            double random_time = benchmark.runFromSupplier(randomsup, 5);
+            logger.info("Running for a Partially with " + el + " elements.");
+            double partial_time = benchmark.runFromSupplier(partialsup, 5);
+            logger.info("Running for a Reversed with " + el + " elements.");
+            double reverse_time = benchmark.runFromSupplier(reversesup, 5);
+
+            // Adding to an XYSeries
+//            random_series.add(Math.log(el), Math.log(random_time));
+//            partial_series.add(Math.log(el), Math.log(partial_time));
+//            reverse_series.add(Math.log(el), Math.log(reverse_time));
+
+            // Adding to an XYSeries
+            random_series.add((el), (random_time));
+            partial_series.add((el), (partial_time));
+            reverse_series.add((el), (reverse_time));
+
+            //logger.info("Time taken: " + time + " for " + elements + " elements.");
+
+            // Doubling the number of elements
             elements *= 2;
         }
 
-        WalkPlotter plot = new WalkPlotter(sort_time, null, null);
+        // WalkPlotter object to plot graph
+        WalkPlotter plot = new WalkPlotter(random_series, partial_series, reverse_series,"Number of Elements vs Time","Elements","Time in Milliseconds");
         plot.setVisible(true);
     }
 
     /**
-     *
-     * @return
+     * Method to create a sorted, partially sorted, random, or reverse sorted array
+     * of n elements.
+     * @param n     Size of the output array
+     * @param type  Select the type of array to be generated. ex: Sorted, Random, Partially Sorted, Reverse
+     * @return Integer array of size n
      */
-    public Integer[] getRandom(int n) {
+    public Integer[] getArray(int n, String type) {
         ArrayList<Integer> lt = new ArrayList<Integer>();
         Random random = new Random();
 
+        if(type == "partial"){
+            Integer[] temp_sorted = getArray(n,"sorted");
+
+            for(int i=0; i<n/5; i++){
+                temp_sorted[random.nextInt(n)] = random.nextInt(1000);
+            }
+
+            return temp_sorted;
+        }
+
         for (int i = 0; i < n; i++) {
-            lt.add(random.nextInt(1000));
+
+            switch (type){
+                case "random" :  lt.add(random.nextInt(1000));
+                                break;
+                case "sorted" : lt.add(i);
+                                break;
+                case "reverse": lt.add(n-i);
+                                break;
+            }
+
         }
 
         return lt.toArray(new Integer[lt.size()]);

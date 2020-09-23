@@ -30,14 +30,22 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 public class WalkPlotter extends JFrame {
 
+    private String graph_title = "";
+    private String x_label = "";
+    private String y_label = "";
+
     /**
      * Constructor which intakes XYSeries to plot
      * @param series0 the first series
      * @param series1 the second series
      * @param series2 the third series
      */
-    public WalkPlotter(XYSeries series0, XYSeries series1, XYSeries series2) {
+    public WalkPlotter(XYSeries series0, XYSeries series1, XYSeries series2, String title, String x, String y) {
+        this.graph_title = title;
+        this.x_label = x;
+        this.y_label = y;
         initUI(series0, series1, series2);
+
     }
 
     /**
@@ -68,7 +76,7 @@ public class WalkPlotter extends JFrame {
         add(chartPanel);
 
         pack();
-        setTitle("Steps vs Distance");
+        setTitle(graph_title);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -77,9 +85,9 @@ public class WalkPlotter extends JFrame {
     private JFreeChart createChart(XYDataset dataset) {
 
         JFreeChart chart = ChartFactory.createXYLineChart(
-                "Distance over Steps",
-                "Steps",
-                "Distance",
+                graph_title,
+                x_label,
+                y_label,
                 dataset,
                 PlotOrientation.VERTICAL,
                 true,
@@ -100,8 +108,10 @@ public class WalkPlotter extends JFrame {
 
         renderer.setSeriesStroke(0, new BasicStroke(2f));
         renderer.setSeriesShapesVisible(0 ,true);
+        renderer.setSeriesStroke(1, new BasicStroke(2f));
+        renderer.setSeriesShapesVisible(1, true);
         renderer.setSeriesStroke(2, new BasicStroke(2f));
-        renderer.setSeriesShapesVisible(2, false);
+        renderer.setSeriesShapesVisible(2, true);
 
         plot.setRenderer(renderer);
         plot.setBackgroundPaint(Color.white);
@@ -119,13 +129,14 @@ public class WalkPlotter extends JFrame {
         domain.setTickUnit(new NumberTickUnit(5));
         domain.setVerticalTickLabels(true);
 
-        chart.setTitle(new TextTitle("Distance over Steps",
+        chart.setTitle(new TextTitle(graph_title,
                         new Font("Helvetica", java.awt.Font.BOLD, 18)
                 )
         );
 
         return chart;
     }
+
 
 
 }
