@@ -67,21 +67,28 @@ public class Benchmark_Timer<T> implements Benchmark<T> {
             Supplier<Integer[]> randomsup = () -> benchmark.getArray(el, "random");
             Supplier<Integer[]> partialsup = () -> benchmark.getArray(el, "partial");
             Supplier<Integer[]> reversesup = () -> benchmark.getArray(el, "reverse");
+            Supplier<Integer[]> ordersup = () -> benchmark.getArray(el, "sorted");
 
             // Storing the mean time calculated from running runFromSupplier on insertion sort
-            logger.info("Running for a Random with " + el + " elements.");
+
             double random_time = benchmark.runFromSupplier(randomsup, 5);
-            logger.info("Running for a Partially with " + el + " elements.");
+            logger.info("Ran for Random with " + el + " elements." + " Time taken was: " + random_time);
             double partial_time = benchmark.runFromSupplier(partialsup, 5);
-            logger.info("Running for a Reversed with " + el + " elements.");
+            logger.info("Ran for Partially with " + el + " elements." + " Time taken was: " + partial_time);
             double reverse_time = benchmark.runFromSupplier(reversesup, 5);
+            logger.info("Ran for Reversed with " + el + " elements." + " Time taken was: " + reverse_time);
+            double order_time = benchmark.runFromSupplier(ordersup, 5);
+            logger.info("Ran for Ordered with " + el + " elements." + " Time taken was: " + order_time);
 
-            // Adding to an XYSeries
-//            random_series.add(Math.log(el), Math.log(random_time));
-//            partial_series.add(Math.log(el), Math.log(partial_time));
-//            reverse_series.add(Math.log(el), Math.log(reverse_time));
+            // Adding to the logs of time and elements to XYSeries
+//            if(random_time>=0)
+//                random_series.add(Math.log(el), Math.log(random_time));
+//            if(partial_time>=0)
+//                partial_series.add(Math.log(el), Math.log(partial_time));
+//            if(reverse_time>=0)
+//                reverse_series.add(Math.log(el), Math.log(reverse_time));
 
-            // Adding to an XYSeries
+            // Adding to XYSeries
             random_series.add((el), (random_time));
             partial_series.add((el), (partial_time));
             reverse_series.add((el), (reverse_time));
@@ -93,7 +100,7 @@ public class Benchmark_Timer<T> implements Benchmark<T> {
         }
 
         // WalkPlotter object to plot graph
-        WalkPlotter plot = new WalkPlotter(random_series, partial_series, reverse_series,"Number of Elements vs Time","Elements","Time in Milliseconds");
+        WalkPlotter plot = new WalkPlotter(random_series, partial_series, reverse_series," Elements vs Time","Elements","Time in Milliseconds");
         plot.setVisible(true);
     }
 
@@ -105,9 +112,14 @@ public class Benchmark_Timer<T> implements Benchmark<T> {
      * @return Integer array of size n
      */
     public Integer[] getArray(int n, String type) {
+        // Temporary arraylist to return elements from
         ArrayList<Integer> lt = new ArrayList<Integer>();
         Random random = new Random();
 
+        // Checking if we need partially sorted elements
+        // To produce a partially sorted list, we get a fully sorted list
+        // and generate a random number of indexes, 20% of the size of the list
+        // in this case. And then randomly generate new values at those indexes.
         if(type == "partial"){
             Integer[] temp_sorted = getArray(n,"sorted");
 
@@ -118,6 +130,7 @@ public class Benchmark_Timer<T> implements Benchmark<T> {
             return temp_sorted;
         }
 
+        // In case of other options
         for (int i = 0; i < n; i++) {
 
             switch (type){
