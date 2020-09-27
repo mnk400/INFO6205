@@ -55,10 +55,10 @@ public class Benchmark_Timer<T> implements Benchmark<T> {
         XYSeries reverse_series = new XYSeries("Reverse Sorted Array");
 
         // Starting the sort with 400 elements.
-        int elements = 400;
+        int elements = 10;
 
         // For loop that increasingly doubles the number of elements and sorts them.
-        for(int i=0; i<8; i++) {
+        for(int i=0; i<1; i++) {
 
             // Creating a final integer with number of elements.
             final int el = elements;
@@ -70,7 +70,6 @@ public class Benchmark_Timer<T> implements Benchmark<T> {
             Supplier<Integer[]> ordersup = () -> benchmark.getArray(el, "sorted");
 
             // Storing the mean time calculated from running runFromSupplier on insertion sort
-
             double random_time = benchmark.runFromSupplier(randomsup, 5);
             logger.info("Ran for Random with " + el + " elements." + " Time taken was: " + random_time);
             double partial_time = benchmark.runFromSupplier(partialsup, 5);
@@ -92,8 +91,6 @@ public class Benchmark_Timer<T> implements Benchmark<T> {
             random_series.add((el), (random_time));
             partial_series.add((el), (partial_time));
             reverse_series.add((el), (reverse_time));
-
-            //logger.info("Time taken: " + time + " for " + elements + " elements.");
 
             // Doubling the number of elements
             elements *= 2;
