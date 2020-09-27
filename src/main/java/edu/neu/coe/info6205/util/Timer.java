@@ -76,8 +76,9 @@ public class Timer {
             }
 
         }
-
-        return meanLapTime();
+        double mean = meanLapTime();
+        resume();
+        return mean;
     }
 
     /**
