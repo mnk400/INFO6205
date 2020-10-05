@@ -84,6 +84,7 @@ public class UF_HWQUPC implements UF {
         while(root != parent[root]){
             root = parent[root];
         }
+        // Check if path compression is enabled
         if(pathCompression){
             doPathCompression(p, root);
         }
@@ -175,7 +176,7 @@ public class UF_HWQUPC implements UF {
     private void mergeComponents(int i, int j) {
         if (i == j) return;
 
-        // make shorter root point to taller one
+        // make shorter tree attach to taller one
         if      (height[i] < height[j]) parent[i] = j;
         else if (height[i] > height[j]) parent[j] = i;
         else {
@@ -186,6 +187,8 @@ public class UF_HWQUPC implements UF {
 
     /**
      * This implements the single-pass path-halving mechanism of path compression
+     * @param p     Tree we're attaching to
+     * @param root  Tree we're attaching
      */
     private void doPathCompression(int p, int root) {
         while(p != root){
