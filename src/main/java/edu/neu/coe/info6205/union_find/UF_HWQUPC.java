@@ -63,6 +63,15 @@ public class UF_HWQUPC implements UF {
     }
 
     /**
+     * Method to return the final depth of the tree once
+     * all the components are connected
+     * @return Depth as an int
+     */
+    public int finalDepth(){
+        int max = Arrays.stream(height).max().getAsInt();
+        return max;
+    }
+    /**
      * Returns the number of components.
      *
      * @return the number of components (between {@code 1} and {@code n})
