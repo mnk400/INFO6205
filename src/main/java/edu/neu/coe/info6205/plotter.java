@@ -104,7 +104,12 @@ public class plotter extends JFrame {
 //
 //        renderer.setSeriesPaint(0, colorb);
 //        renderer.setSeriesPaint(1, colorr);
+        renderer.setSeriesPaint(1, Color.pink);
+        renderer.setSeriesPaint(2, Color.ORANGE);
         renderer.setSeriesPaint(3, Color.DARK_GRAY);
+        renderer.setSeriesPaint(6, Color.red);
+        renderer.setSeriesPaint(4, Color.BLUE);
+        renderer.setSeriesPaint(5, Color.GREEN);
 //
 //        renderer.setSeriesStroke(0, new BasicStroke(2f));
 //        renderer.setSeriesShapesVisible(0 ,true);
