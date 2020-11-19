@@ -22,16 +22,19 @@ public class Main {
     public static void main(String[] args) {
         processArgs(args);
         System.out.println("Degree of parallelism: " + ForkJoinPool.getCommonPoolParallelism());
-        plotter plot = new plotter("Thread vs Time", "Threads", "Time");
+        plotter plot = new plotter("Cutoff vs Time", "Cutoff", "Time");
         Random random = new Random();
         int[] array = new int[2000000];
         ArrayList<Long> timeList = new ArrayList<>();
 
-        for( int k = 1; k <= 16; k = k*2) {
+        for( int k = 1; k <= 32; k = k*2) {
             ParSort.threadCount = k;
             ParSort.threadPool = new ForkJoinPool(ParSort.threadCount);
             String seriesName = "" + k + " Threads";
             XYSeries timeSeries = new XYSeries(seriesName);
+            double min = 99999;
+            int minCutoff = 0;
+            double avg = 0;
             for (int j = 50; j < 100; j++) {
 
                 ParSort.cutoff = 10000 * (j + 1);
@@ -45,12 +48,18 @@ public class Main {
                 }
                 long endTime = System.currentTimeMillis();
                 time = (endTime - startTime);
+                avg += time/20;
+                if(time/20 < min){
+                    minCutoff = 10000 * (j + 1);
+                    min = time/20;
+                }
                 timeList.add(time);
                 timeSeries.add(10000 * (j + 1), time/20);
                 System.out
                     .println("cutoff：" + (ParSort.cutoff) + "\t\t20 times Time:" + time + "ms");
 
             }
+            System.out.println("For threads " + k + " min is = " + min + " at cutoff " + minCutoff + " and average is = " + avg/50);
             plot.addSeries(timeSeries);
         }
 

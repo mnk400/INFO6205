@@ -23,7 +23,6 @@ class ParSort {
             CompletableFuture<int[]> parsort2 = parsort(array, from + (to - from) / 2, to); // TO IMPLEMENT
             CompletableFuture<int[]> parsort = parsort1.thenCombine(parsort2, (xs1, xs2) -> {
                 int[] result = new int[xs1.length + xs2.length];
-                // TO IMPLEMENT
                 int i = 0, j = 0;
                 for(int k = 0; k < result.length; k++) {
                     if(i > xs1.length - 1) result[k] = xs2[j++];
@@ -45,7 +44,6 @@ class ParSort {
         return CompletableFuture.supplyAsync(
                 () -> {
                     int[] result = new int[to - from];
-                    // TO IMPLEMENT
                     System.arraycopy(array, from, result, 0, result.length);
                     sort(result, 0, to - from);
                     return result;
